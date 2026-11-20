@@ -1,0 +1,3790 @@
+openapi: 3.0.0
+info:
+  title: 'Dabus API Specification'
+  description: 'REST API Specification in OpenAPI 3 format'
+  license:
+    name: Commercial
+  version: 2.0.1
+servers:
+  -
+    url: '{base_url}/{api_version}/{sandbox}/{system_code}'
+    variables:
+      base_url:
+        default: 'http://127.0.0.1:4000'
+        description: 'The base url.'
+      api_version:
+        enum:
+          - v1
+        default: v1
+        description: 'The Dabus API version.'
+      sandbox:
+        default: commercetools
+        description: 'The sandbox.'
+      system_code:
+        default: test-b2b-project
+        description: 'The system code.'
+paths:
+  /attributes:
+    get:
+      tags:
+        - AttributeRepositoryV1
+      summary: 'Search for attributes'
+      description: 'Use parameters to paginate through attribute results.'
+      operationId: AttributeRepositoryV1Search
+      parameters:
+        -
+          name: delta
+          in: query
+          description: 'Delta descripter'
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Delta'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attributes'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Attributes'
+        '400':
+          description: 'Invalid code supplied.'
+        '404':
+          description: 'Unable to find attribute.'
+      security:
+        -
+          'OAuth 2': []
+  '/attribute/{code}':
+    get:
+      tags:
+        - AttributeRepositoryV1
+      summary: 'Find attribute by code'
+      description: 'Returns a single attribute.'
+      operationId: AttributeRepositoryV1Get
+      parameters:
+        -
+          name: code
+          in: path
+          description: 'Code of attribute to return.'
+          required: true
+          schema:
+            type: string
+            format: code
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attribute'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Attribute'
+        '400':
+          description: 'Invalid code supplied.'
+        '404':
+          description: 'Unable to find attribute.'
+      security:
+        -
+          'OAuth 2': []
+    put:
+      tags:
+        - AttributeRepositoryV1
+      summary: 'Update attribute by code'
+      description: 'Returns the single attribute updated.'
+      operationId: AttributeRepositoryV1Update
+      parameters:
+        -
+          name: code
+          in: path
+          description: 'Code of attribute to be upated.'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 'Attribute data.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Attribute'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Attribute'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attribute'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Attribute'
+        '400':
+          description: 'Invalid attribute data supplied.'
+        '404':
+          description: 'Unable to find attribute.'
+      security:
+        -
+          'OAuth 2': []
+    patch:
+      tags:
+        - AttributeRepositoryV1
+      summary: 'Partialy update attribute by code'
+      description: 'Returns the single attribute patched.'
+      operationId: AttributeRepositoryV1Patch
+      parameters:
+        -
+          name: code
+          in: path
+          description: 'Code of attribute to be patched.'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 'For specification and examples of patch request, please refer to RFC 5261.'
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/XmlPatch'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attribute'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Attribute'
+        '400':
+          description: 'Invalid attribute patch instructions supplied.'
+        '404':
+          description: 'Unable to find attribute.'
+      security:
+        -
+          'OAuth 2': []
+  /attribute:
+    post:
+      tags:
+        - AttributeRepositoryV1
+      summary: 'Create a attribute'
+      description: 'Returns the single attribute created.'
+      operationId: AttributeRepositoryV1Create
+      requestBody:
+        description: 'Attribute data.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Attribute'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Attribute'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Attribute'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Attribute'
+        '400':
+          description: 'Invalid attribute data supplied.'
+      security:
+        -
+          'OAuth 2': []
+  /bundle-products:
+    get:
+      tags:
+        - BundleProductRepositoryV1
+      summary: 'Search for bundle products'
+      description: 'Use parameters to paginate through bundle product results.'
+      operationId: BundleProductRepositoryV1Search
+      parameters:
+        -
+          name: delta
+          in: query
+          description: 'Delta descripter'
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Delta'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BundleProducts'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/BundleProducts'
+        '400':
+          description: 'Invalid SKU supplied.'
+        '404':
+          description: 'Unable to find bundle product.'
+      security:
+        -
+          'OAuth 2': []
+  '/bundle-product/{sku}':
+    get:
+      tags:
+        - BundleProductRepositoryV1
+      summary: 'Find bundle product by SKU'
+      description: 'Returns a single bundle product.'
+      operationId: BundleProductRepositoryV1Get
+      parameters:
+        -
+          name: sku
+          in: path
+          description: 'SKU of bundle product to return.'
+          required: true
+          schema:
+            type: string
+          example: ABCD123
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BundleProduct'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/BundleProduct'
+        '400':
+          description: 'Invalid SKU supplied.'
+        '404':
+          description: 'Unable to find bundle product.'
+      security:
+        -
+          'OAuth 2': []
+    put:
+      tags:
+        - BundleProductRepositoryV1
+      summary: 'Update bundle product by SKU'
+      description: 'Returns the single bundle product updated.'
+      operationId: BundleProductRepositoryV1Update
+      parameters:
+        -
+          name: sku
+          in: path
+          description: 'SKU of bundle product to be upated.'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 'Bundle Product data.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BundleProduct'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/BundleProduct'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BundleProduct'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/BundleProduct'
+        '400':
+          description: 'Invalid bundle product data supplied.'
+        '404':
+          description: 'Unable to find bundle product.'
+      security:
+        -
+          'OAuth 2': []
+    patch:
+      tags:
+        - BundleProductRepositoryV1
+      summary: 'Partialy update bundle product by SKU'
+      description: 'Returns the single bundle product patched.'
+      operationId: BundleProductRepositoryV1Patch
+      parameters:
+        -
+          name: sku
+          in: path
+          description: 'SKU of bundle product to be patched.'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 'For specification and examples of patch request, please refer to RFC 5261.'
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/XmlPatch'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BundleProduct'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/BundleProduct'
+        '400':
+          description: 'Invalid bundle product patch instructions supplied.'
+        '404':
+          description: 'Unable to find bundle product.'
+      security:
+        -
+          'OAuth 2': []
+  /bundle-product:
+    post:
+      tags:
+        - BundleProductRepositoryV1
+      summary: 'Create a bundle product'
+      description: 'Returns the single bundle product created.'
+      operationId: BundleProductRepositoryV1Create
+      requestBody:
+        description: 'Bundle Product data.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BundleProduct'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/BundleProduct'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BundleProduct'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/BundleProduct'
+        '400':
+          description: 'Invalid bundle product data supplied.'
+      security:
+        -
+          'OAuth 2': []
+  /categories:
+    get:
+      tags:
+        - CategoryRepositoryV1
+      summary: 'Search for categories'
+      description: 'Use parameters to paginate through category results.'
+      operationId: CategoryRepositoryV1Search
+      parameters:
+        -
+          name: delta
+          in: query
+          description: 'Delta descripter'
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Delta'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Categories'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Categories'
+        '400':
+          description: 'Invalid name supplied.'
+        '404':
+          description: 'Unable to find category.'
+      security:
+        -
+          'OAuth 2': []
+  '/category/{name}':
+    get:
+      tags:
+        - CategoryRepositoryV1
+      summary: 'Find category by name'
+      description: 'Returns a single category.'
+      operationId: CategoryRepositoryV1Get
+      parameters:
+        -
+          name: name
+          in: path
+          description: 'Name of category to return.'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          description: 'Invalid name supplied.'
+        '404':
+          description: 'Unable to find category.'
+      security:
+        -
+          'OAuth 2': []
+    put:
+      tags:
+        - CategoryRepositoryV1
+      summary: 'Update category by name'
+      description: 'Returns the single category updated.'
+      operationId: CategoryRepositoryV1Update
+      parameters:
+        -
+          name: name
+          in: path
+          description: 'Name of category to be upated.'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 'Category data.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Category'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          description: 'Invalid category data supplied.'
+        '404':
+          description: 'Unable to find category.'
+      security:
+        -
+          'OAuth 2': []
+    patch:
+      tags:
+        - CategoryRepositoryV1
+      summary: 'Partialy update category by name'
+      description: 'Returns the single category patched.'
+      operationId: CategoryRepositoryV1Patch
+      parameters:
+        -
+          name: name
+          in: path
+          description: 'Name of category to be patched.'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 'For specification and examples of patch request, please refer to RFC 5261.'
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/XmlPatch'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          description: 'Invalid category patch instructions supplied.'
+        '404':
+          description: 'Unable to find category.'
+      security:
+        -
+          'OAuth 2': []
+  /category:
+    post:
+      tags:
+        - CategoryRepositoryV1
+      summary: 'Create a category'
+      description: 'Returns the single category created.'
+      operationId: CategoryRepositoryV1Create
+      requestBody:
+        description: 'Category data.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Category'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          description: 'Invalid category data supplied.'
+      security:
+        -
+          'OAuth 2': []
+  /companies:
+    get:
+      tags:
+        - CompanyRepositoryV1
+      summary: 'Search for companies'
+      description: 'Use parameters to paginate through company results.'
+      operationId: CompanyRepositoryV1Search
+      parameters:
+        -
+          name: delta
+          in: query
+          description: 'Delta descripter'
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Delta'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Companies'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Companies'
+        '400':
+          description: 'Invalid name supplied.'
+        '404':
+          description: 'Unable to find company.'
+      security:
+        -
+          'OAuth 2': []
+  '/company/{name}':
+    get:
+      tags:
+        - CompanyRepositoryV1
+      summary: 'Find company by name'
+      description: 'Returns a single company.'
+      operationId: CompanyRepositoryV1Get
+      parameters:
+        -
+          name: name
+          in: path
+          description: 'Name of company to return.'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Company'
+        '400':
+          description: 'Invalid name supplied.'
+        '404':
+          description: 'Unable to find company.'
+      security:
+        -
+          'OAuth 2': []
+    put:
+      tags:
+        - CompanyRepositoryV1
+      summary: 'Update company by name'
+      description: 'Returns the single company updated.'
+      operationId: CompanyRepositoryV1Update
+      parameters:
+        -
+          name: name
+          in: path
+          description: 'Name of company to be upated.'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 'Company data.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Company'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Company'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Company'
+        '400':
+          description: 'Invalid company data supplied.'
+        '404':
+          description: 'Unable to find company.'
+      security:
+        -
+          'OAuth 2': []
+    patch:
+      tags:
+        - CompanyRepositoryV1
+      summary: 'Partialy update company by name'
+      description: 'Returns the single company patched.'
+      operationId: CompanyRepositoryV1Patch
+      parameters:
+        -
+          name: name
+          in: path
+          description: 'Name of company to be patched.'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 'For specification and examples of patch request, please refer to RFC 5261.'
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/XmlPatch'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Company'
+        '400':
+          description: 'Invalid company patch instructions supplied.'
+        '404':
+          description: 'Unable to find company.'
+      security:
+        -
+          'OAuth 2': []
+  /company:
+    post:
+      tags:
+        - CompanyRepositoryV1
+      summary: 'Create a company'
+      description: 'Returns the single company created.'
+      operationId: CompanyRepositoryV1Create
+      requestBody:
+        description: 'Company data.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Company'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Company'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Company'
+        '400':
+          description: 'Invalid company data supplied.'
+      security:
+        -
+          'OAuth 2': []
+  /configurable-products:
+    get:
+      tags:
+        - ConfigurableProductRepositoryV1
+      summary: 'Search for configurable products'
+      description: 'Use parameters to paginate through configurable product results.'
+      operationId: ConfigurableProductRepositoryV1Search
+      parameters:
+        -
+          name: delta
+          in: query
+          description: 'Delta descripter'
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Delta'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurableProducts'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ConfigurableProducts'
+        '400':
+          description: 'Invalid SKU supplied.'
+        '404':
+          description: 'Unable to find configurable product.'
+      security:
+        -
+          'OAuth 2': []
+  '/configurable-product/{sku}':
+    get:
+      tags:
+        - ConfigurableProductRepositoryV1
+      summary: 'Find configurable product by SKU'
+      description: 'Returns a single configurable product.'
+      operationId: ConfigurableProductRepositoryV1Get
+      parameters:
+        -
+          name: sku
+          in: path
+          description: 'SKU of configurable product to return.'
+          required: true
+          schema:
+            type: string
+          example: ABCD123
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurableProduct'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ConfigurableProduct'
+        '400':
+          description: 'Invalid SKU supplied.'
+        '404':
+          description: 'Unable to find configurable product.'
+      security:
+        -
+          'OAuth 2': []
+    put:
+      tags:
+        - ConfigurableProductRepositoryV1
+      summary: 'Update configurable product by SKU'
+      description: 'Returns the single configurable product updated.'
+      operationId: ConfigurableProductRepositoryV1Update
+      parameters:
+        -
+          name: sku
+          in: path
+          description: 'SKU of configurable product to be upated.'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 'Configurable Product data.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigurableProduct'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/ConfigurableProduct'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurableProduct'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ConfigurableProduct'
+        '400':
+          description: 'Invalid configurable product data supplied.'
+        '404':
+          description: 'Unable to find configurable product.'
+      security:
+        -
+          'OAuth 2': []
+    patch:
+      tags:
+        - ConfigurableProductRepositoryV1
+      summary: 'Partialy update configurable product by SKU'
+      description: 'Returns the single configurable product patched.'
+      operationId: ConfigurableProductRepositoryV1Patch
+      parameters:
+        -
+          name: sku
+          in: path
+          description: 'SKU of configurable product to be patched.'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 'For specification and examples of patch request, please refer to RFC 5261.'
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/XmlPatch'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurableProduct'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ConfigurableProduct'
+        '400':
+          description: 'Invalid configurable product patch instructions supplied.'
+        '404':
+          description: 'Unable to find configurable product.'
+      security:
+        -
+          'OAuth 2': []
+  /configurable-product:
+    post:
+      tags:
+        - ConfigurableProductRepositoryV1
+      summary: 'Create a configurable product'
+      description: 'Returns the single configurable product created.'
+      operationId: ConfigurableProductRepositoryV1Create
+      requestBody:
+        description: 'Configurable Product data.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigurableProduct'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/ConfigurableProduct'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurableProduct'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ConfigurableProduct'
+        '400':
+          description: 'Invalid configurable product data supplied.'
+      security:
+        -
+          'OAuth 2': []
+  /customers:
+    get:
+      tags:
+        - CustomerRepositoryV1
+      summary: 'Search for customers'
+      description: 'Use parameters to paginate through customer results.'
+      operationId: CustomerRepositoryV1Search
+      parameters:
+        -
+          name: delta
+          in: query
+          description: 'Delta descripter'
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Delta'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customers'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Customers'
+        '400':
+          description: 'Invalid email supplied.'
+        '404':
+          description: 'Unable to find customer.'
+      security:
+        -
+          'OAuth 2': []
+  '/customer/{email}':
+    get:
+      tags:
+        - CustomerRepositoryV1
+      summary: 'Find customer by email'
+      description: 'Returns a single customer.'
+      operationId: CustomerRepositoryV1Get
+      parameters:
+        -
+          name: email
+          in: path
+          description: 'Email of customer to return.'
+          required: true
+          schema:
+            type: string
+            format: email
+            example: user@example.com
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '400':
+          description: 'Invalid email supplied.'
+        '404':
+          description: 'Unable to find customer.'
+      security:
+        -
+          'OAuth 2': []
+    put:
+      tags:
+        - CustomerRepositoryV1
+      summary: 'Update customer by email'
+      description: 'Returns the single customer updated.'
+      operationId: CustomerRepositoryV1Update
+      parameters:
+        -
+          name: email
+          in: path
+          description: 'Email of customer to be upated.'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 'Customer data.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Customer'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '400':
+          description: 'Invalid customer data supplied.'
+        '404':
+          description: 'Unable to find customer.'
+      security:
+        -
+          'OAuth 2': []
+    patch:
+      tags:
+        - CustomerRepositoryV1
+      summary: 'Partialy update customer by email'
+      description: 'Returns the single customer patched.'
+      operationId: CustomerRepositoryV1Patch
+      parameters:
+        -
+          name: email
+          in: path
+          description: 'Email of customer to be patched.'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 'For specification and examples of patch request, please refer to RFC 5261.'
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/XmlPatch'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '400':
+          description: 'Invalid customer patch instructions supplied.'
+        '404':
+          description: 'Unable to find customer.'
+      security:
+        -
+          'OAuth 2': []
+  /customer:
+    post:
+      tags:
+        - CustomerRepositoryV1
+      summary: 'Create a customer'
+      description: 'Returns the single customer created.'
+      operationId: CustomerRepositoryV1Create
+      requestBody:
+        description: 'Customer data.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Customer'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '400':
+          description: 'Invalid customer data supplied.'
+      security:
+        -
+          'OAuth 2': []
+  /inventory-source/items:
+    get:
+      tags:
+        - InventorySourceItemRepositoryV1
+      summary: 'Search for inventory source items'
+      description: 'Use parameters to paginate through inventory source item results.'
+      operationId: InventorySourceItemRepositoryV1Search
+      parameters:
+        -
+          name: delta
+          in: query
+          description: 'Delta descripter'
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Delta'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventorySourceItems'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/InventorySourceItems'
+      security:
+        -
+          'OAuth 2': []
+  '/inventory-source/{source_code}/item/{sku}':
+    get:
+      tags:
+        - InventorySourceItemRepositoryV1
+      summary: 'Find inventory source item by source code and product SKU'
+      description: 'Returns a single inventory source item.'
+      operationId: InventorySourceItemRepositoryV1Get
+      parameters:
+        -
+          name: source_code
+          in: path
+          description: 'The inventory source code.'
+          required: true
+          schema:
+            type: string
+        -
+          name: sku
+          in: path
+          description: 'The product SKU.'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventorySourceItem'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/InventorySourceItem'
+        '404':
+          description: 'Unable to find inventory source item.'
+      security:
+        -
+          'OAuth 2': []
+    put:
+      tags:
+        - InventorySourceItemRepositoryV1
+      summary: 'Update inventory source item by source code and product SKU'
+      description: 'Returns the single inventory source item updated.'
+      operationId: InventorySourceItemRepositoryV1Update
+      parameters:
+        -
+          name: source_code
+          in: path
+          description: 'Source code of inventory source item to be upated.'
+          required: true
+          schema:
+            type: string
+        -
+          name: sku
+          in: path
+          description: 'Product SKU of inventory source item to be upated.'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 'Inventory source item data.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventorySourceItem'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/InventorySourceItem'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventorySourceItem'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/InventorySourceItem'
+        '400':
+          description: 'Invalid inventory source item data supplied.'
+        '404':
+          description: 'Unable to find inventory source item.'
+      security:
+        -
+          'OAuth 2': []
+    patch:
+      tags:
+        - InventorySourceItemRepositoryV1
+      summary: 'Partialy update inventory source item by source code and product SKU'
+      description: 'Returns the single inventory source item patched.'
+      operationId: InventorySourceItemRepositoryV1Patch
+      parameters:
+        -
+          name: source_code
+          in: path
+          description: 'Source code of inventory source item to be patched.'
+          required: true
+          schema:
+            type: string
+        -
+          name: sku
+          in: path
+          description: 'Product SKU of inventory source item to be patched.'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 'For specification and examples of patch request, please refer to RFC 5261.'
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/XmlPatch'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventorySourceItem'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/InventorySourceItem'
+        '400':
+          description: 'Invalid inventory source item patch instructions supplied.'
+        '404':
+          description: 'Unable to find inventory source item.'
+      security:
+        -
+          'OAuth 2': []
+  '/inventory-source/{source_code}/item':
+    post:
+      tags:
+        - InventorySourceItemRepositoryV1
+      summary: 'Create an inventory source item'
+      description: 'Returns the single inventory source item created.'
+      operationId: InventorySourceItemRepositoryV1Create
+      parameters:
+        -
+          name: source_code
+          in: path
+          description: 'The inventory source code.'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 'Inventory source item data'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventorySourceItem'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/InventorySourceItem'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventorySourceItem'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/InventorySourceItem'
+        '400':
+          description: 'Invalid inventory source item data supplied.'
+      security:
+        -
+          'OAuth 2': []
+  '/inventory-source/{source_code}/items':
+    post:
+      tags:
+        - InventorySourceItemRepositoryV1
+      summary: 'Create/update inventory source items in an inventory source in bulk'
+      description: 'Returns all the inventory source items created/updated.'
+      operationId: InventorySourceItemRepositoryV1BulkUpsert
+      parameters:
+        -
+          name: source_code
+          in: path
+          description: 'The inventory source code.'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 'Inventory source items data'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventorySourceItems'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/InventorySourceItems'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventorySourceItems'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/InventorySourceItems'
+        '400':
+          description: 'Invalid inventory source items data supplied.'
+      security:
+        -
+          'OAuth 2': []
+  /inventory-sources:
+    get:
+      tags:
+        - InventorySourceRepositoryV1
+      summary: 'Search for inventory sources'
+      description: 'Use parameters to paginate through inventory source results.'
+      operationId: InventorySourceRepositoryV1Search
+      parameters:
+        -
+          name: delta
+          in: query
+          description: 'Delta descripter'
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Delta'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventorySources'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/InventorySources'
+      security:
+        -
+          'OAuth 2': []
+  '/inventory-source/{source_code}':
+    get:
+      tags:
+        - InventorySourceRepositoryV1
+      summary: 'Find inventory source by source code'
+      description: 'Returns a single inventory source.'
+      operationId: InventorySourceRepositoryV1Get
+      parameters:
+        -
+          name: source_code
+          in: path
+          description: 'The inventory source code.'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventorySource'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/InventorySource'
+        '404':
+          description: 'Unable to find inventory source.'
+      security:
+        -
+          'OAuth 2': []
+    put:
+      tags:
+        - InventorySourceRepositoryV1
+      summary: 'Update inventory source by source code'
+      description: 'Returns the single inventory source updated.'
+      operationId: InventorySourceRepositoryV1Update
+      parameters:
+        -
+          name: source_code
+          in: path
+          description: 'Source code of inventory source to be upated.'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 'Inventory source data.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventorySource'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/InventorySource'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventorySource'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/InventorySource'
+        '400':
+          description: 'Invalid inventory source data supplied.'
+        '404':
+          description: 'Unable to find inventory source.'
+      security:
+        -
+          'OAuth 2': []
+    patch:
+      tags:
+        - InventorySourceRepositoryV1
+      summary: 'Partialy update inventory source by source code'
+      description: 'Returns the single inventory source patched.'
+      operationId: InventorySourceRepositoryV1Patch
+      parameters:
+        -
+          name: source_code
+          in: path
+          description: 'Source code of inventory source to be patched.'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 'For specification and examples of patch request, please refer to RFC 5261.'
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/XmlPatch'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventorySource'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/InventorySource'
+        '400':
+          description: 'Invalid inventory source patch instructions supplied.'
+        '404':
+          description: 'Unable to find inventory source.'
+      security:
+        -
+          'OAuth 2': []
+  /inventory-source:
+    post:
+      tags:
+        - InventorySourceRepositoryV1
+      summary: 'Create an inventory source'
+      description: 'Returns the single inventory source created.'
+      operationId: InventorySourceRepositoryV1Create
+      requestBody:
+        description: 'Inventory source data'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventorySource'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/InventorySource'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventorySource'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/InventorySource'
+        '400':
+          description: 'Invalid inventory source data supplied.'
+      security:
+        -
+          'OAuth 2': []
+  /orders:
+    get:
+      tags:
+        - OrderRepositoryV1
+      summary: 'Search for orders'
+      description: 'Use parameters to paginate through order results.'
+      operationId: OrderRepositoryV1Search
+      parameters:
+        -
+          name: delta
+          in: query
+          description: 'Delta descripter'
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Delta'
+        -
+          name: order_origin
+          in: query
+          description: 'The order origin of the orders to be searched.'
+          required: false
+          schema:
+            type: string
+          example: commercetools
+        -
+          name: status
+          in: query
+          description: 'The status of the orders to be searched.'
+          required: false
+          schema:
+            type: string
+          example: processing
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Orders'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Orders'
+        '400':
+          description: 'Invalid name supplied.'
+        '404':
+          description: 'Unable to find order.'
+      security:
+        -
+          'OAuth 2': []
+  '/order/{order_number}':
+    get:
+      tags:
+        - OrderRepositoryV1
+      summary: 'Find order by order number'
+      description: 'Returns a single order.'
+      operationId: OrderRepositoryV1Get
+      parameters:
+        -
+          name: order_number
+          in: path
+          description: 'The order number.'
+          required: true
+          schema:
+            type: string
+          example: ORDER123456789
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: 'Invalid name supplied.'
+        '404':
+          description: 'Unable to find order.'
+      security:
+        -
+          'OAuth 2': []
+    put:
+      tags:
+        - OrderRepositoryV1
+      summary: 'Update an order'
+      description: 'Returns the single order updated.'
+      operationId: OrderRepositoryV1Update
+      parameters:
+        -
+          name: order_number
+          in: path
+          description: 'The order number of the order to be upated.'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 'Please note the embedded customer data is for reference only.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: 'Invalid order data supplied.'
+        '404':
+          description: 'Unable to find the order.'
+      security:
+        -
+          'OAuth 2': []
+  /order:
+    post:
+      tags:
+        - OrderRepositoryV1
+      summary: 'Create an order'
+      description: 'Returns the single order created.'
+      operationId: OrderRepositoryV1Create
+      requestBody:
+        description: 'Please note the embedded customer data is for reference only.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: 'Invalid order data supplied.'
+      security:
+        -
+          'OAuth 2': []
+  /products:
+    get:
+      tags:
+        - ProductRepositoryV1
+      summary: 'Search for products'
+      description: 'Use parameters to paginate through product results.'
+      operationId: ProductRepositoryV1Search
+      parameters:
+        -
+          name: delta
+          in: query
+          description: 'Delta descripter'
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Delta'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Products'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Products'
+        '400':
+          description: 'Invalid SKU supplied.'
+        '404':
+          description: 'Unable to find product.'
+      security:
+        -
+          'OAuth 2': []
+  '/product/{sku}':
+    get:
+      tags:
+        - ProductRepositoryV1
+      summary: 'Find product by SKU'
+      description: 'Returns a single product.'
+      operationId: ProductRepositoryV1Get
+      parameters:
+        -
+          name: sku
+          in: path
+          description: 'SKU of product to return.'
+          required: true
+          schema:
+            type: string
+          example: ABCD123
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: 'Invalid SKU supplied.'
+        '404':
+          description: 'Unable to find product.'
+      security:
+        -
+          'OAuth 2': []
+    put:
+      tags:
+        - ProductRepositoryV1
+      summary: 'Update product by SKU'
+      description: 'Returns the single product updated.'
+      operationId: ProductRepositoryV1Update
+      parameters:
+        -
+          name: sku
+          in: path
+          description: 'SKU of product to be upated.'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 'Product data.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: 'Invalid product data supplied.'
+        '404':
+          description: 'Unable to find product.'
+      security:
+        -
+          'OAuth 2': []
+    patch:
+      tags:
+        - ProductRepositoryV1
+      summary: 'Partialy update product by SKU'
+      description: 'Returns the single product patched.'
+      operationId: ProductRepositoryV1Patch
+      parameters:
+        -
+          name: sku
+          in: path
+          description: 'SKU of product to be patched.'
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 'For specification and examples of patch request, please refer to RFC 5261.'
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/XmlPatch'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: 'Invalid product patch instructions supplied.'
+        '404':
+          description: 'Unable to find product.'
+      security:
+        -
+          'OAuth 2': []
+  /product:
+    post:
+      tags:
+        - ProductRepositoryV1
+      summary: 'Create a product'
+      description: 'Returns the single product created.'
+      operationId: ProductRepositoryV1Create
+      requestBody:
+        description: 'Product data.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: 'Invalid product data supplied.'
+      security:
+        -
+          'OAuth 2': []
+  /shipments:
+    get:
+      tags:
+        - ShipmentRepositoryV1
+      summary: 'Search for shipments'
+      description: 'Use parameters to paginate through shipment results.'
+      operationId: ShipmentRepositoryV1Search
+      parameters:
+        -
+          name: delta
+          in: query
+          description: 'Delta descripter'
+          style: deepObject
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Delta'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shipments'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Shipments'
+        '400':
+          description: 'Invalid name supplied.'
+        '404':
+          description: 'Unable to find shipment.'
+      security:
+        -
+          'OAuth 2': []
+  '/shipment/{shipment_code}':
+    get:
+      tags:
+        - ShipmentRepositoryV1
+      summary: 'Find shipment by code'
+      description: 'Returns a single shipment.'
+      operationId: ShipmentRepositoryV1Get
+      parameters:
+        -
+          name: shipment_code
+          in: path
+          description: 'The shipment code.'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+        '400':
+          description: 'Invalid name supplied.'
+        '404':
+          description: 'Unable to find shipment.'
+      security:
+        -
+          'OAuth 2': []
+  /shipment:
+    post:
+      tags:
+        - ShipmentRepositoryV1
+      summary: 'Create a shipment'
+      description: 'Please note the embedded order data is for reference only.'
+      operationId: ShipmentRepositoryV1Create
+      requestBody:
+        description: 'Shipment data.'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Shipment'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Shipment'
+      responses:
+        '200':
+          description: 'Successful operation.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+        '400':
+          description: 'Invalid shipment data supplied.'
+      security:
+        -
+          'OAuth 2': []
+components:
+  schemas:
+    CreatedAt:
+      description: 'RFC 3339, section 5.6'
+      type: string
+      format: date-time
+      xml:
+        name: CreatedAt
+      example: '2019-06-11T08:40:30Z'
+      nullable: false
+    UpdatedAt:
+      description: 'RFC 3339, section 5.6'
+      type: string
+      format: date-time
+      xml:
+        name: UpdatedAt
+      example: '2019-06-11T08:40:30Z'
+      nullable: false
+    AttributeOptions:
+      title: AttributeOptions
+      description: 'Attribute Options Collection'
+      type: array
+      items:
+        $ref: '#/components/schemas/AttributeOption'
+      xml:
+        name: Options
+        wrapped: true
+      nullable: false
+    Attribute:
+      title: Attribute
+      description: Attribute
+      required:
+        - type
+        - code
+        - options
+      properties:
+        type:
+          description: 'Attribute type (e.g. text, boolean, select, multi).'
+          type: string
+          minLength: 1
+          xml:
+            name: Type
+          example: text
+          nullable: false
+        code:
+          description: 'Code for the attribute.'
+          type: string
+          minLength: 1
+          xml:
+            name: Code
+          nullable: false
+        label:
+          description: 'Label for the attribute.'
+          type: string
+          minLength: 1
+          xml:
+            name: Label
+          nullable: false
+        options:
+          $ref: '#/components/schemas/AttributeOptions'
+        created_at:
+          $ref: '#/components/schemas/CreatedAt'
+        updated_at:
+          $ref: '#/components/schemas/UpdatedAt'
+      type: object
+      xml:
+        name: Attribute
+    AttributeOption:
+      title: AttributeOption
+      description: AttributeOption
+      required:
+        - label
+        - value
+      properties:
+        label:
+          description: 'Interface CanonicalAttributeOptionInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: Label
+          nullable: false
+        value:
+          description: 'Interface CanonicalAttributeOptionInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: Value
+          nullable: false
+        created_at:
+          $ref: '#/components/schemas/CreatedAt'
+        updated_at:
+          $ref: '#/components/schemas/UpdatedAt'
+      type: object
+      xml:
+        name: AttributeOption
+    Attributes:
+      title: Attributes
+      description: Attributes
+      required:
+        - attributes
+      properties:
+        attributes:
+          description: 'Class CanonicalAttributes.'
+          type: array
+          items:
+            $ref: '#/components/schemas/Attribute'
+          xml:
+            name: Attributes
+            wrapped: false
+          nullable: false
+      type: object
+      xml:
+        name: Attributes
+    BundleProductProducts:
+      title: BundleProductProducts
+      description: 'BundleProduct Simple Product Collection'
+      type: array
+      items:
+        $ref: '#/components/schemas/Product'
+      xml:
+        name: Products
+        wrapped: true
+      nullable: false
+    BundleProduct:
+      title: BundleProduct
+      description: BundleProduct
+      required:
+        - sku
+        - name
+      properties:
+        sku:
+          description: 'Interface CanonicalBundleProductInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: Sku
+          nullable: false
+        name:
+          description: 'Name for the configurable product.'
+          type: string
+          minLength: 1
+          xml:
+            name: Name
+          nullable: false
+        price:
+          description: 'Interface CanonicalBundleProductInterface.'
+          type: number
+          format: float
+          xml:
+            name: Price
+          nullable: true
+        special_price:
+          description: 'Interface CanonicalBundleProductInterface.'
+          type: number
+          format: float
+          xml:
+            name: SpecialPrice
+          example: '39.95'
+          nullable: true
+        special_from:
+          description: 'The special price stargint date and time (inclusive). RFC 3339, section 5.6.'
+          type: string
+          format: date-time
+          xml:
+            name: SpecialFrom
+          example: '2019-06-11T08:40:30Z'
+          nullable: true
+        special_to:
+          description: 'The special price ending date and time (inclusive). RFC 3339, section 5.6.'
+          type: string
+          format: date-time
+          xml:
+            name: SpecialTo
+          example: '2019-06-11T08:40:30Z'
+          nullable: true
+        price_type:
+          description: '0 for dynamic price, 1 for fixed.'
+          type: integer
+          format: int32
+          xml:
+            name: PriceType
+          example: '0'
+          nullable: true
+        description:
+          description: 'Description for the bundle product.'
+          type: string
+          minLength: 1
+          xml:
+            name: Description
+          nullable: false
+        products:
+          $ref: '#/components/schemas/BundleProductProducts'
+        tier_prices:
+          $ref: '#/components/schemas/ProductTierPrices'
+        values:
+          description: 'Interface for custom attribute value'
+          properties:
+            field_name:
+              description: 'Value of custom field'
+              type: string
+              example: value
+          type: object
+        medias:
+          $ref: '#/components/schemas/ProductMedias'
+        created_at:
+          $ref: '#/components/schemas/CreatedAt'
+        updated_at:
+          $ref: '#/components/schemas/UpdatedAt'
+      type: object
+      xml:
+        name: BundleProduct
+    BundleProducts:
+      title: BundleProducts
+      description: BundleProducts
+      required:
+        - bundleProducts
+      properties:
+        bundleProducts:
+          description: 'Class CanonicalBundleProducts.'
+          type: array
+          items:
+            $ref: '#/components/schemas/BundleProduct'
+          xml:
+            name: BundleProducts
+            wrapped: false
+          nullable: false
+      type: object
+      xml:
+        name: BundleProducts
+    Categories:
+      title: Categories
+      description: Categories
+      required:
+        - categories
+      properties:
+        categories:
+          description: 'Class CanonicalCategories.'
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+          xml:
+            name: Categories
+            wrapped: false
+          nullable: false
+      type: object
+      xml:
+        name: Categories
+    Category:
+      title: Category
+      description: Category
+      required:
+        - code
+      properties:
+        parent_code:
+          description: 'Code of the parent category'
+          type: string
+          minLength: 1
+          xml:
+            name: ParentCode
+          nullable: true
+        name:
+          description: 'The name of the category'
+          type: string
+          minLength: 1
+          xml:
+            name: Name
+          nullable: true
+        code:
+          description: 'The code of the category'
+          type: string
+          minLength: 1
+          xml:
+            name: Code
+          nullable: false
+        position:
+          description: 'The code of the category'
+          type: integer
+          format: int32
+          xml:
+            name: Position
+          nullable: false
+        created_at:
+          $ref: '#/components/schemas/CreatedAt'
+        updated_at:
+          $ref: '#/components/schemas/UpdatedAt'
+      type: object
+      xml:
+        name: Category
+    Companies:
+      title: Companies
+      description: Companies
+      required:
+        - companies
+      properties:
+        companies:
+          description: 'Class CanonicalCompanies.'
+          type: array
+          items:
+            $ref: '#/components/schemas/Company'
+          xml:
+            name: Companies
+            wrapped: false
+          nullable: false
+      type: object
+      xml:
+        name: Companies
+    CreditLimit:
+      title: CreditLimit
+      description: CreditLimit
+      required:
+        - credit_limit
+        - currency_code
+      properties:
+        credit_limit:
+          description: 'Interface CanonicalCompanyCreditLimitInterface.'
+          type: number
+          format: float
+          xml:
+            name: CreditLimit
+          nullable: false
+        balance:
+          description: 'Interface CanonicalCompanyCreditLimitInterface.'
+          type: number
+          format: float
+          xml:
+            name: Balance
+          nullable: false
+        currency_code:
+          description: 'Interface CanonicalCompanyCreditLimitInterface.'
+          type: string
+          pattern: '[A-Z]{3}'
+          xml:
+            name: CurrencyCode
+          nullable: false
+        exceed_limit:
+          description: 'Interface CanonicalCompanyCreditLimitInterface.'
+          type: number
+          format: float
+          xml:
+            name: ExceedLimit
+          nullable: false
+        available_limit:
+          description: 'Interface CanonicalCompanyCreditLimitInterface.'
+          type: number
+          format: float
+          xml:
+            name: AvailableLimit
+          nullable: false
+      type: object
+      xml:
+        name: CreditLimit
+    CompanyCreditLimits:
+      title: 'Credit Limits'
+      description: 'Credit Limits'
+      type: array
+      items:
+        $ref: '#/components/schemas/CreditLimit'
+      xml:
+        name: CreditLimits
+        wrapped: true
+      nullable: false
+    Company:
+      title: Company
+      description: Company
+      required:
+        - name
+      properties:
+        identifier:
+          description: 'Identifier for the customer.'
+          type: string
+          minLength: 1
+          xml:
+            name: Identifier
+          nullable: true
+        email:
+          description: 'Email for the company.'
+          type: string
+          format: email
+          minLength: 1
+          xml:
+            name: Email
+          nullable: true
+        admin_user_email:
+          description: 'Email of the admin user for the company.'
+          type: string
+          format: email
+          minLength: 1
+          xml:
+            name: AdminUserEmail
+          nullable: true
+        user_emails:
+          description: 'Emails of customers who belong to the company.'
+          type: array
+          items:
+            type: string
+            format: email
+            xml:
+              name: UserEmail
+          xml:
+            name: UserEmails
+            wrapped: true
+          nullable: false
+        name:
+          description: 'Name for the company.'
+          type: string
+          minLength: 1
+          xml:
+            name: Name
+          nullable: false
+        street1:
+          description: 'Street line 1 for the company.'
+          type: string
+          minLength: 1
+          xml:
+            name: Street1
+          nullable: true
+        street2:
+          description: 'Street line 2 for the company.'
+          type: string
+          minLength: 1
+          xml:
+            name: Street2
+          nullable: true
+        city:
+          description: 'City for the company.'
+          type: string
+          minLength: 1
+          xml:
+            name: City
+          nullable: true
+        state:
+          description: 'State for the company.'
+          type: string
+          minLength: 1
+          xml:
+            name: State
+          nullable: true
+        postcode:
+          description: 'Postcode for the company.'
+          type: string
+          minLength: 1
+          xml:
+            name: Postcode
+          nullable: true
+        country:
+          description: 'ISO_3166-1_alpha-2 country code.'
+          type: string
+          minLength: 1
+          pattern: '^[A-Z]{2}$'
+          xml:
+            name: Country
+          example: AU
+          nullable: true
+        telephone:
+          description: 'Telephone for the company.'
+          type: string
+          minLength: 1
+          xml:
+            name: Telephone
+          nullable: true
+        credit_limits:
+          $ref: '#/components/schemas/CompanyCreditLimits'
+        values:
+          description: 'Interface for custom attribute value'
+          properties:
+            field_name:
+              description: 'Value of custom field'
+              type: string
+              example: value
+          type: object
+        created_at:
+          $ref: '#/components/schemas/CreatedAt'
+        updated_at:
+          $ref: '#/components/schemas/UpdatedAt'
+      type: object
+      xml:
+        name: Company
+    ConfigurableProductAxisAttributes:
+      title: ConfigurableProductAxisAttributes
+      description: 'ConfigurableProductAxisAttributes Axis Attributes Collection'
+      type: array
+      items:
+        $ref: '#/components/schemas/Attribute'
+      xml:
+        name: AxisAttributes
+        wrapped: true
+      nullable: false
+    ConfigurableProductProducts:
+      title: ConfigurableProductProducts
+      description: 'ConfigurableProduct Simple Product Collection'
+      type: array
+      items:
+        $ref: '#/components/schemas/Product'
+      xml:
+        name: Products
+        wrapped: true
+      nullable: false
+    ConfigurableProduct:
+      title: ConfigurableProduct
+      description: ConfigurableProduct
+      required:
+        - sku
+        - name
+      properties:
+        sku:
+          description: 'Interface CanonicalConfigurableProduct.'
+          type: string
+          minLength: 1
+          xml:
+            name: Sku
+          nullable: false
+        name:
+          description: 'Name for the configurable product.'
+          type: string
+          minLength: 1
+          xml:
+            name: Name
+          nullable: false
+        description:
+          description: 'Description for the configurable product.'
+          type: string
+          minLength: 1
+          xml:
+            name: Description
+          nullable: false
+        axis_attributes:
+          $ref: '#/components/schemas/ConfigurableProductAxisAttributes'
+        products:
+          $ref: '#/components/schemas/ConfigurableProductProducts'
+        medias:
+          $ref: '#/components/schemas/ProductMedias'
+        values:
+          description: 'Interface for custom attribute value'
+          properties:
+            field_name:
+              description: 'Value of custom field'
+              type: string
+              example: value
+          type: object
+        created_at:
+          $ref: '#/components/schemas/CreatedAt'
+        updated_at:
+          $ref: '#/components/schemas/UpdatedAt'
+      type: object
+      xml:
+        name: ConfigurableProduct
+    ConfigurableProducts:
+      title: ConfigurableProducts
+      description: ConfigurableProducts
+      required:
+        - configurableProducts
+      properties:
+        configurableProducts:
+          description: 'Class CanonicalConfigurableProducts.'
+          type: array
+          items:
+            $ref: '#/components/schemas/ConfigurableProduct'
+          xml:
+            name: ConfigurableProducts
+            wrapped: false
+          nullable: false
+      type: object
+      xml:
+        name: ConfigurableProducts
+    CustomerAddress:
+      title: CustomerAddress
+      description: CustomerAddress
+      required:
+        - street1
+        - country
+        - address_type
+      properties:
+        company:
+          description: 'Interface CanonicalCustomerAddressInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: Company
+          nullable: true
+        contact_name:
+          description: 'Interface CanonicalCustomerAddressInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: ContactName
+          nullable: true
+        last_name:
+          description: 'Interface CanonicalCustomerAddressInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: LastName
+          nullable: true
+        street1:
+          description: 'Interface CanonicalCustomerAddressInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: Street1
+          nullable: false
+        street2:
+          description: 'Interface CanonicalCustomerAddressInterface.'
+          type: string
+          xml:
+            name: Street2
+          nullable: true
+        city:
+          description: 'Interface CanonicalCustomerAddressInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: City
+          nullable: true
+        state:
+          description: 'Interface CanonicalCustomerAddressInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: State
+          example: VIC
+          nullable: true
+        postcode:
+          description: 'Interface CanonicalCustomerAddressInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: Postcode
+          nullable: true
+        country:
+          description: 'ISO_3166-1_alpha-3 country code.'
+          type: string
+          maxLength: 3
+          minLength: 3
+          pattern: '^[A-Z]$'
+          xml:
+            name: Country
+          example: AU
+          nullable: false
+        telephone:
+          description: 'Interface CanonicalCustomerAddressInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: Telephone
+          nullable: true
+        address_type:
+          description: 'Interface CanonicalCustomerAddressInterface.'
+          type: string
+          minLength: 1
+          pattern: ^(billing|shipping)$
+          enum:
+            - billing
+            - shipping
+          xml:
+            name: AddressType
+          nullable: false
+        created_at:
+          $ref: '#/components/schemas/CreatedAt'
+        updated_at:
+          $ref: '#/components/schemas/UpdatedAt'
+      type: object
+      xml:
+        name: CustomerAddress
+    CustomerAddresses:
+      description: Addresses
+      type: array
+      items:
+        $ref: '#/components/schemas/CustomerAddress'
+      xml:
+        name: Addresses
+        wrapped: true
+      nullable: false
+    Customer:
+      title: Customer
+      description: Customer
+      required:
+        - email
+        - first_name
+        - last_name
+      properties:
+        identifier:
+          description: 'Identifier for the customer.'
+          type: string
+          xml:
+            name: Identifier
+          nullable: false
+        email:
+          description: 'Email for the customer.'
+          type: string
+          format: email
+          xml:
+            name: Email
+          nullable: false
+        title:
+          description: 'Title (Dr, Ms, Mr etc) for the customer.'
+          type: string
+          xml:
+            name: Title
+          nullable: false
+        first_name:
+          description: 'First name for the customer.'
+          type: string
+          xml:
+            name: FirstName
+          nullable: false
+        last_name:
+          description: 'Last name for the customer.'
+          type: string
+          xml:
+            name: LastName
+          nullable: false
+        gender:
+          description: 'ISO 5128 gender.'
+          type: integer
+          format: int32
+          pattern: '^[0,1,2,9]$'
+          enum:
+            - 0
+            - 1
+            - 2
+            - 9
+          xml:
+            name: Gender
+          nullable: false
+        dob:
+          description: 'Date of birth for the customer.'
+          type: string
+          format: date
+          xml:
+            name: Dob
+          nullable: false
+        addresses:
+          $ref: '#/components/schemas/CustomerAddresses'
+        values:
+          description: 'Interface for custom attribute value'
+          properties:
+            field_name:
+              description: 'Value of custom field'
+              type: string
+              example: value
+          type: object
+        created_at:
+          $ref: '#/components/schemas/CreatedAt'
+        updated_at:
+          $ref: '#/components/schemas/UpdatedAt'
+      type: object
+      xml:
+        name: Customer
+    Customers:
+      title: Customers
+      description: Customers
+      required:
+        - customers
+      properties:
+        customers:
+          description: 'Class CanonicalCustomers.'
+          type: array
+          items:
+            $ref: '#/components/schemas/Customer'
+          xml:
+            name: customers
+            wrapped: false
+          nullable: false
+      type: object
+      xml:
+        name: Customers
+    Discount:
+      title: Discount
+      description: Discount
+      properties:
+        type:
+          description: 'Interface CanonicalDiscountInterface.'
+          type: string
+          xml:
+            name: Type
+        value:
+          description: 'Interface CanonicalDiscountInterface.'
+          type: number
+          format: float
+          xml:
+            name: Value
+      type: object
+      xml:
+        name: Discount
+    DownloadableProductLink:
+      title: DownloadableProductLink
+      description: DownloadableProductLink
+      required:
+        - title
+        - link_url
+        - sample_url
+      properties:
+        title:
+          type: string
+          minLength: 1
+          xml:
+            name: Title
+          nullable: false
+        sort_order:
+          type: number
+          format: int32
+          xml:
+            name: SortOrder
+          nullable: true
+        is_shareable:
+          type: number
+          format: int32
+          xml:
+            name: IsShareable
+          nullable: true
+        price:
+          type: number
+          format: float
+          xml:
+            name: Price
+          nullable: true
+        number_of_downloads:
+          type: number
+          format: int32
+          xml:
+            name: NumberOfDownloads
+          nullable: true
+        link_type:
+          type: string
+          xml:
+            name: LinkType
+          nullable: true
+        link_file:
+          type: string
+          xml:
+            name: LinkFile
+          nullable: true
+        link_url:
+          type: string
+          xml:
+            name: LinkUrl
+          nullable: false
+        sample_type:
+          type: string
+          xml:
+            name: SampleType
+          nullable: true
+        sample_file:
+          type: string
+          xml:
+            name: SampleFile
+          nullable: true
+        sample_url:
+          type: string
+          xml:
+            name: SampleUrl
+          nullable: false
+      type: object
+      xml:
+        name: DownloadableProductLink
+    DownloadableProductSample:
+      title: DownloadableProductSample
+      description: DownloadableProductSample
+      required:
+        - title
+        - sample_file
+      properties:
+        title:
+          type: string
+          minLength: 1
+          xml:
+            name: Title
+          nullable: false
+        sort_order:
+          type: number
+          format: int32
+          xml:
+            name: SortOrder
+          nullable: true
+        sample_type:
+          type: string
+          xml:
+            name: SampleType
+          nullable: true
+        sample_file:
+          type: string
+          xml:
+            name: SampleFile
+          nullable: false
+        sample_url:
+          type: string
+          xml:
+            name: SampleUrl
+          nullable: true
+      type: object
+      xml:
+        name: DownloadableProductLink
+    GroupProductProducts:
+      title: GroupProductProducts
+      description: 'GroupProduct Simple Product Collection'
+      type: array
+      items:
+        $ref: '#/components/schemas/Product'
+      xml:
+        name: Products
+        wrapped: true
+      nullable: false
+    GroupProduct:
+      title: GroupProduct
+      description: GroupProduct
+      properties:
+        sku:
+          description: 'Interface CanonicalGroupProduct.'
+          type: string
+          minLength: 1
+          xml:
+            name: Sku
+          nullable: false
+        name:
+          description: 'Name for the group product.'
+          type: string
+          minLength: 1
+          xml:
+            name: Name
+          nullable: false
+        description:
+          description: 'Description for the group product.'
+          type: string
+          minLength: 1
+          xml:
+            name: Description
+          nullable: false
+        products:
+          $ref: '#/components/schemas/GroupProductProducts'
+        created_at:
+          $ref: '#/components/schemas/CreatedAt'
+        updated_at:
+          $ref: '#/components/schemas/UpdatedAt'
+      type: object
+      xml:
+        name: GroupProduct
+    InventorySource:
+      title: InventorySource
+      description: InventorySource
+      required:
+        - code
+        - enabled
+      properties:
+        code:
+          description: 'Interface CanonicalInventorySourceInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: Code
+          nullable: false
+        name:
+          description: 'Interface CanonicalInventorySourceInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: Name
+          nullable: false
+        email:
+          description: 'Interface CanonicalInventorySourceInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: Email
+          nullable: false
+        contact_name:
+          description: 'Interface CanonicalInventorySourceInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: ContactName
+          nullable: false
+        enabled:
+          description: 'Interface CanonicalInventorySourceInterface.'
+          type: boolean
+          xml:
+            name: Enabled
+          nullable: false
+        description:
+          description: 'Interface CanonicalInventorySourceInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: Description
+          nullable: false
+        latitude:
+          description: 'Interface CanonicalInventorySourceInterface.'
+          type: number
+          format: float
+          xml:
+            name: Latitude
+          nullable: false
+        longitude:
+          description: 'Interface CanonicalInventorySourceInterface.'
+          type: number
+          format: float
+          xml:
+            name: Longitude
+          nullable: false
+        country_id:
+          description: 'Interface CanonicalInventorySourceInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: CountryId
+          nullable: false
+        region_code:
+          description: 'Interface CanonicalInventorySourceInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: RegionCode
+          nullable: false
+        city:
+          description: 'Interface CanonicalInventorySourceInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: City
+          nullable: false
+        street:
+          description: 'Interface CanonicalInventorySourceInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: Street
+          nullable: false
+        postcode:
+          description: 'Interface CanonicalInventorySourceInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: Postcode
+          nullable: false
+        phone:
+          description: 'Interface CanonicalInventorySourceInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: Phone
+          nullable: false
+        fax:
+          description: 'Interface CanonicalInventorySourceInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: Fax
+          nullable: false
+        created_at:
+          $ref: '#/components/schemas/CreatedAt'
+        updated_at:
+          $ref: '#/components/schemas/UpdatedAt'
+      type: object
+      xml:
+        name: InventorySource
+    InventorySourceItem:
+      title: InventorySourceItem
+      description: InventorySourceItem
+      required:
+        - source_code
+        - sku
+      properties:
+        sku:
+          description: 'The SKU/indentity of a product.'
+          type: string
+          minLength: 1
+          xml:
+            name: Sku
+          nullable: false
+        source_code:
+          description: 'The code/indentity of an inventory source.'
+          type: string
+          minLength: 1
+          xml:
+            name: SourceCode
+          nullable: false
+        quantity:
+          description: 'Interface CanonicalInventorySourceItemInterface.'
+          type: number
+          format: float
+          xml:
+            name: Quantity
+          nullable: false
+        status:
+          description: 'Interface CanonicalInventorySourceItemInterface.'
+          type: integer
+          format: int32
+          xml:
+            name: Status
+          nullable: false
+        created_at:
+          $ref: '#/components/schemas/CreatedAt'
+        updated_at:
+          $ref: '#/components/schemas/UpdatedAt'
+      type: object
+      xml:
+        name: InventorySourceItem
+    InventorySourceItems:
+      title: InventorySourceItems
+      description: InventorySourceItems
+      required:
+        - inventory_source_items
+      properties:
+        inventory_source_items:
+          description: 'Class CanonicalInventorySourceItems.'
+          type: array
+          items:
+            $ref: '#/components/schemas/InventorySourceItem'
+          xml:
+            name: InventorySourceItems
+            wrapped: false
+          nullable: false
+      type: object
+      xml:
+        name: InventorySourceItems
+    InventorySources:
+      title: InventorySources
+      description: InventorySources
+      required:
+        - inventory_sources
+      properties:
+        inventory_sources:
+          description: 'Class CanonicalInventorySources.'
+          type: array
+          items:
+            $ref: '#/components/schemas/InventorySource'
+          xml:
+            name: InventorySources
+            wrapped: false
+          nullable: false
+      type: object
+      xml:
+        name: InventorySources
+    OrderItems:
+      type: array
+      items:
+        $ref: '#/components/schemas/OrderItem'
+      xml:
+        name: OrderItems
+        wrapped: true
+      nullable: false
+    Payments:
+      type: array
+      items:
+        $ref: '#/components/schemas/Payment'
+      xml:
+        name: Payments
+        wrapped: true
+      nullable: false
+    Order:
+      title: Order
+      description: Order
+      required:
+        - order_number
+        - customer
+      properties:
+        order_number:
+          description: 'Interface CanonicalOrderInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: OrderNumber
+          example: ORDER123456789
+          nullable: false
+        order_origin:
+          description: 'Interface CanonicalOrderInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: OrderOrigin
+          example: commercetools
+          nullable: false
+        status:
+          description: 'Interface CanonicalOrderInterface.'
+          type: string
+          minLength: 1
+          enum:
+            - canceled
+            - closed
+            - complete
+            - holded
+            - pending
+            - processing
+            - shipped
+            - returned
+          xml:
+            name: Status
+          example: processing
+          nullable: false
+        is_guest:
+          description: 'If this is a guest order or not.'
+          type: boolean
+          xml:
+            name: IsGuest
+          nullable: false
+        total:
+          description: 'Grand total for the order.'
+          type: number
+          format: float
+          xml:
+            name: Total
+          nullable: false
+        discount:
+          description: 'Discount amount applied to the total.'
+          type: number
+          format: float
+          xml:
+            name: Discount
+          nullable: false
+        total_paid:
+          description: 'Total paid for the order.'
+          type: number
+          format: float
+          xml:
+            name: TotalPaid
+          nullable: false
+        tax_amount:
+          description: 'Tax amount of the total.'
+          type: number
+          format: float
+          xml:
+            name: TaxAmount
+          nullable: false
+        currency:
+          description: 'ISO_4217 currency code.'
+          type: string
+          maxLength: 3
+          minLength: 3
+          pattern: '^[A-Z]{3}$'
+          xml:
+            name: Currency
+          nullable: false
+        shipping_amount:
+          description: 'Shipping amount.'
+          type: number
+          format: float
+          xml:
+            name: ShippingAmount
+          nullable: false
+        shipping_incl_tax:
+          description: 'Shipping includes Tax.'
+          type: number
+          format: float
+          xml:
+            name: ShippingInclTax
+          nullable: false
+        shipping_tax_amount:
+          description: 'Shipping Tax Amount.'
+          type: number
+          format: float
+          xml:
+            name: ShippingTaxAmount
+          nullable: false
+        shipping_description:
+          description: 'Shipping description.'
+          type: string
+          minLength: 1
+          xml:
+            name: ShippingDescription
+          nullable: false
+        contact_email:
+          description: 'Interface CanonicalOrderInterface.'
+          type: string
+          format: email
+          xml:
+            name: ContactEmail
+          nullable: false
+        company:
+          description: Company.
+          type: string
+          minLength: 1
+          xml:
+            name: Company
+          nullable: false
+        customer:
+          xml:
+            name: Customer
+          $ref: '#/components/schemas/Customer'
+        addresses:
+          $ref: '#/components/schemas/CustomerAddresses'
+        order_items:
+          $ref: '#/components/schemas/OrderItems'
+        payments:
+          $ref: '#/components/schemas/Payments'
+        values:
+          description: 'Interface for custom attribute value'
+          properties:
+            field_name:
+              description: 'Value of custom field'
+              type: string
+              example: value
+          type: object
+        created_at:
+          $ref: '#/components/schemas/CreatedAt'
+        updated_at:
+          $ref: '#/components/schemas/UpdatedAt'
+      type: object
+      xml:
+        name: Order
+    OrderItem:
+      title: OrderItem
+      description: OrderItem
+      required:
+        - sku
+        - qty
+        - price
+        - price_incl_tax
+      properties:
+        parent_product:
+          xml:
+            name: ParentProduct
+          nullable: false
+          $ref: '#/components/schemas/ConfigurableProduct'
+        product:
+          xml:
+            name: Product
+          nullable: false
+          $ref: '#/components/schemas/Product'
+        name:
+          description: "All prices, amounts etc are considered to be the 'base' currency.\nThere is not currently anywhere that the 'display' currency is stored for orders or order items."
+          type: string
+          minLength: 1
+          xml:
+            name: Name
+          nullable: false
+        product_type:
+          description: "All prices, amounts etc are considered to be the 'base' currency.\nThere is not currently anywhere that the 'display' currency is stored for orders or order items."
+          type: string
+          minLength: 1
+          xml:
+            name: ProductType
+          nullable: false
+        sku:
+          description: "All prices, amounts etc are considered to be the 'base' currency.\nThere is not currently anywhere that the 'display' currency is stored for orders or order items."
+          type: string
+          minLength: 1
+          xml:
+            name: Sku
+          nullable: false
+        qty:
+          description: "All prices, amounts etc are considered to be the 'base' currency.\nThere is not currently anywhere that the 'display' currency is stored for orders or order items."
+          type: number
+          format: float
+          xml:
+            name: Qty
+          nullable: false
+        price:
+          description: "All prices, amounts etc are considered to be the 'base' currency.\nThere is not currently anywhere that the 'display' currency is stored for orders or order items."
+          type: number
+          format: float
+          xml:
+            name: Price
+          nullable: false
+        price_incl_tax:
+          description: "All prices, amounts etc are considered to be the 'base' currency.\nThere is not currently anywhere that the 'display' currency is stored for orders or order items."
+          type: number
+          format: float
+          xml:
+            name: PriceInclTax
+          nullable: false
+        tax_percent:
+          description: "All prices, amounts etc are considered to be the 'base' currency.\nThere is not currently anywhere that the 'display' currency is stored for orders or order items."
+          type: number
+          format: float
+          xml:
+            name: TaxPercent
+          nullable: false
+        row_total:
+          description: 'Tax-exclusive row total.'
+          type: number
+          format: float
+          xml:
+            name: RowTotal
+          nullable: false
+        row_total_incl_tax:
+          description: 'Tax-inclusive row total.'
+          type: number
+          format: float
+          xml:
+            name: RowTotalInclTax
+          nullable: false
+        tax_amount:
+          description: 'Amount of tax for the row.'
+          type: number
+          format: float
+          xml:
+            name: TaxAmount
+          nullable: false
+        discount_tax_compensation:
+          description: '''hidden tax'' used for tax calculations when discounts apply to taxable goods.'
+          type: number
+          format: float
+          xml:
+            name: DiscountTaxCompensation
+          nullable: false
+        discount_amount:
+          description: 'Discount amount for the order item.'
+          type: number
+          format: float
+          xml:
+            name: DiscountAmount
+          nullable: false
+        inventory_source_assignments:
+          description: 'Number of the item qty assigned to each inventory source code.'
+          properties:
+            code:
+              description: "All prices, amounts etc are considered to be the 'base' currency.\nThere is not currently anywhere that the 'display' currency is stored for orders or order items."
+              type: integer
+              format: int32
+              example: value
+          type: object
+      type: object
+      xml:
+        name: OrderItem
+    Orders:
+      title: Orders
+      description: Orders
+      required:
+        - orders
+      properties:
+        orders:
+          description: 'Class CanonicalOrders.'
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
+          xml:
+            name: Orders
+            wrapped: false
+          nullable: false
+      type: object
+      xml:
+        name: Orders
+    Payment:
+      title: Payment
+      description: Payment
+      properties:
+        method:
+          description: 'Interface CanonicalPaymentInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: Method
+          nullable: false
+        card_type:
+          description: 'Interface CanonicalPaymentInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: CardType
+          nullable: false
+        amount:
+          description: 'Interface CanonicalPaymentInterface.'
+          type: number
+          format: float
+          xml:
+            name: Amount
+          nullable: false
+        validation_code:
+          description: 'Interface CanonicalPaymentInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: ValidationCode
+          nullable: false
+        standard_ref:
+          description: 'Interface CanonicalPaymentInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: StandardRef
+          nullable: false
+        merchant_id:
+          description: 'Interface CanonicalPaymentInterface.'
+          type: string
+          minLength: 1
+          xml:
+            name: MerchantId
+          nullable: false
+      type: object
+      xml:
+        name: Payment
+    Product:
+      title: 'Product model'
+      description: 'Product model'
+      required:
+        - name
+        - sku
+        - price
+      properties:
+        sku:
+          description: 'SKU for the product.'
+          type: string
+          minLength: 1
+          xml:
+            name: Sku
+          example: ABCD123
+        name:
+          description: 'Describes the product'
+          type: string
+          minLength: 1
+          xml:
+            name: Name
+          example: 'Yellow Umbrella'
+        price:
+          description: 'The regular price for the product. Can be overwritten by special prices or tier prices. Should be in the base currency for the instance.'
+          type: number
+          format: float
+          xml:
+            name: Price
+          example: '49.95'
+        special_price:
+          description: 'A special price for the product. Expected to apply if it is lower than the regular price.'
+          type: number
+          format: float
+          xml:
+            name: SpecialPrice
+          example: '39.95'
+        special_from:
+          description: 'The special price stargint date and time (inclusive). RFC 3339, section 5.6.'
+          type: string
+          format: date-time
+          xml:
+            name: SpecialFrom
+          example: '2019-06-11T08:40:30Z'
+        special_to:
+          description: 'The special price ending date and time (inclusive). RFC 3339, section 5.6.'
+          type: string
+          format: date-time
+          xml:
+            name: SpecialTo
+          example: '2019-06-11T08:40:30Z'
+        qty:
+          description: 'The total qty available for the product. Not applicable in cases of multi-stock per instance.'
+          type: integer
+          format: int32
+          xml:
+            name: Qty
+          example: '20'
+        values:
+          description: 'Interface for custom attribute value'
+          properties:
+            field_name:
+              description: 'Value of custom field'
+              type: string
+              example: value
+          type: object
+        tier_prices:
+          $ref: '#/components/schemas/ProductTierPrices'
+        medias:
+          $ref: '#/components/schemas/ProductMedias'
+      type: object
+      xml:
+        name: Product
+    ProductMedias:
+      type: array
+      items:
+        $ref: '#/components/schemas/Media'
+      xml:
+        name: Medias
+        wrapped: true
+      nullable: false
+    Media:
+      title: 'Product Media'
+      description: 'Product media.'
+      required:
+        - path
+      properties:
+        type:
+          description: 'Interface CanonicalProductMediaInterface.'
+          type: string
+          xml:
+            name: Type
+          nullable: true
+        path:
+          description: 'Either an ansolute URL or related URI, both needs to comply with RFC 3986.'
+          type: string
+          minLength: 1
+          xml:
+            name: Path
+          nullable: false
+        base_uri:
+          description: 'The base uri comply with RFC 3986.'
+          type: string
+          minLength: 1
+          xml:
+            name: BaseUri
+          nullable: false
+        label:
+          description: 'Interface CanonicalProductMediaInterface.'
+          type: string
+          xml:
+            name: Label
+          nullable: true
+        display_types:
+          description: 'Interface CanonicalProductMediaInterface.'
+          type: array
+          items:
+            type: string
+            minLength: 1
+            xml:
+              name: DisplayType
+          xml:
+            name: DisplayTypes
+            wrapped: true
+          nullable: false
+      type: object
+      xml:
+        name: Media
+    ProductTierPrices:
+      type: array
+      items:
+        $ref: '#/components/schemas/TierPrice'
+      xml:
+        name: TierPrices
+        wrapped: true
+      nullable: false
+    TierPrice:
+      title: 'Product Tier Price'
+      description: 'Product tier price'
+      required:
+        - price
+        - qty
+      properties:
+        price:
+          description: 'Interface CanonicalTierPrice.'
+          type: number
+          format: float
+          xml:
+            name: Price
+        qty:
+          description: 'Interface CanonicalTierPrice.'
+          type: integer
+          format: int32
+          xml:
+            name: Qty
+        group_code:
+          description: 'Interface CanonicalTierPrice.'
+          type: string
+          minLength: 1
+          xml:
+            name: GroupCode
+          example: general
+      type: object
+      xml:
+        name: TierPrice
+    Products:
+      title: Products
+      description: Products
+      required:
+        - products
+      properties:
+        products:
+          description: 'Class CanonicalProducts.'
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+          xml:
+            name: Products
+            wrapped: false
+          nullable: false
+      type: object
+      xml:
+        name: Products
+    ShipmentItems:
+      title: ShipmentItems
+      description: 'Shipment Items Collection'
+      type: array
+      items:
+        $ref: '#/components/schemas/ShipmentItem'
+      xml:
+        name: Items
+        wrapped: true
+      nullable: false
+    Shipment:
+      title: Shipment
+      description: Shipment
+      required:
+        - carrier_code
+        - carrier_url
+        - track_number
+      properties:
+        order:
+          $ref: '#/components/schemas/Order'
+        carrier_code:
+          type: string
+          minLength: 1
+          xml:
+            name: CarrierCode
+          nullable: false
+        carrier_url:
+          type: string
+          minLength: 1
+          xml:
+            name: CarrierUrl
+          nullable: false
+        track_number:
+          type: string
+          minLength: 1
+          xml:
+            name: TrackNumber
+          nullable: false
+        despatch_date:
+          type: string
+          format: date
+          xml:
+            name: DespatchDate
+          nullable: false
+        items:
+          $ref: '#/components/schemas/ShipmentItems'
+        created_at:
+          $ref: '#/components/schemas/CreatedAt'
+        updated_at:
+          $ref: '#/components/schemas/UpdatedAt'
+      type: object
+      xml:
+        name: Shipment
+    ShipmentItem:
+      title: ShipmentItem
+      description: ShipmentItem
+      required:
+        - qty
+        - product
+      properties:
+        qty:
+          description: 'Interface CanonicalShipmentItemInterface.'
+          type: integer
+          format: int32
+          xml:
+            name: Qty
+          nullable: false
+        weight:
+          description: 'Interface CanonicalShipmentItemInterface.'
+          type: number
+          xml:
+            name: Weight
+          nullable: true
+        product:
+          description: 'Interface CanonicalShipmentItemInterface.'
+          required:
+            - sku
+          properties:
+            sku:
+              description: 'Interface CanonicalShipmentItemInterface.'
+              type: string
+              minLength: 1
+              xml:
+                name: Sku
+              nullable: false
+          type: object
+          xml:
+            name: Product
+          nullable: false
+      type: object
+      xml:
+        name: ShipmentItem
+    Shipments:
+      title: Shipments
+      description: Shipments
+      required:
+        - shipments
+      properties:
+        shipments:
+          description: 'Class CanonicalShipments.'
+          type: array
+          items:
+            $ref: '#/components/schemas/Shipment'
+          xml:
+            name: Shipments
+            wrapped: false
+          nullable: false
+      type: object
+      xml:
+        name: Shipments
+    Delta:
+      title: Delta
+      description: Delta
+      properties:
+        updatedFrom:
+          description: 'The lower limit of document updated timestamp. RFC 3339, section 5.6.'
+          type: string
+          format: date-time
+          example: '2019-05-11T08:40:30Z'
+          nullable: false
+        updatedTo:
+          description: 'The upper limit of document updated timestamp. RFC 3339, section 5.6.'
+          type: string
+          format: date-time
+          example: '2019-06-11T08:40:30Z'
+          nullable: false
+        pageNumber:
+          description: 'The page number'
+          type: integer
+          minimum: 1
+          example: '1'
+          nullable: false
+        pageSize:
+          description: 'The page size'
+          type: integer
+          maximum: 100
+          minimum: 1
+          example: '10'
+          nullable: false
+      type: object
+      xml:
+        name: Delta
+    SystemInstanceCodes:
+      description: "An array of instance codes to associate to the document.\n * When document sharing is enabled between instances, this must contain all of the instances with access to the document.\n *     When document sharing is not enabled, this field must only one element causing an independent record to be maintained for each instance."
+      type: array
+      items:
+        description: 'A code associated to a particular system instance.'
+        type: string
+        minLength: 1
+        xml:
+          name: SystemInstanceCode
+        example: acme
+      xml:
+        name: SystemInstanceCodes
+        wrapped: true
+    XmlPatch:
+      type: object
+      xml:
+        name: Diff
+        wrapped: true
+  securitySchemes:
+    'OAuth2':
+      type: oauth2
+      description: 'AWS cognito'
+      flows:
+        clientCredentials:
+          authorizationUrl: 'https://auth.uat.dabus.io/oauth2/token'
+          tokenUrl: 'https://auth.uat.dabus.io/oauth2/token'
+          scopes: {}
+tags:
+  -
+    name: AttributeRepositoryV1
+    description: 'Attribute related operations.'
+  -
+    name: BundleProductRepositoryV1
+    description: 'Bundle Product related operations.'
+  -
+    name: CategoryRepositoryV1
+    description: 'Category related operations.'
+  -
+    name: CompanyRepositoryV1
+    description: 'Company related operations.'
+  -
+    name: ConfigurableProductRepositoryV1
+    description: 'Configurable Product related operations.'
+  -
+    name: CustomerRepositoryV1
+    description: 'Customer related operations.'
+  -
+    name: InventorySourceItemRepositoryV1
+    description: 'Inventory Source Item related operations.'
+  -
+    name: InventorySourceRepositoryV1
+    description: 'Inventory Source related operations.'
+  -
+    name: OrderRepositoryV1
+    description: 'Order related operations.'
+  -
+    name: ProductRepositoryV1
+    description: 'Product related operations.'
+  -
+    name: ShipmentRepositoryV1
+    description: 'Shipment related operations.'

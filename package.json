@@ -1,0 +1,15 @@
+{
+  "name": "dabus-connect-local-tools",
+  "private": true,
+  "engines": {
+    "node": ">=24.18.0"
+  },
+  "scripts": {
+    "mock:dabus": "node scripts/mock-dabus.mts"
+  },
+  "devDependencies": {
+    "@stoplight/prism-cli": "5.16.0",
+    "@types/node": "^26.6.6",
+    "yaml": "^2.8.1"
+  }
+}
