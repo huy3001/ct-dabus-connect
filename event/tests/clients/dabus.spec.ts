@@ -69,12 +69,12 @@ describe('Dabus client', () => {
   });
 
   it('requires HTTPS except for loopback hosts', () => {
-    const base = { DAbUS_CLIENT_ID: 'i', DAbUS_CLIENT_SECRET: 's' };
+    const base = { DABUS_CLIENT_ID: 'i', DABUS_CLIENT_SECRET: 's' };
     expect(() =>
-      readDabusSettings({ ...base, DAbUS_BASE_URL: 'http://dabus.example', DAbUS_TOKEN_URL: 'https://a.example' })
+      readDabusSettings({ ...base, DABUS_BASE_URL: 'http://dabus.example', DABUS_TOKEN_URL: 'https://a.example' })
     ).toThrow('HTTPS');
     expect(
-      readDabusSettings({ ...base, DAbUS_BASE_URL: 'http://127.0.0.1:4000/v1', DAbUS_TOKEN_URL: 'https://a.example' }).baseUrl
+      readDabusSettings({ ...base, DABUS_BASE_URL: 'http://127.0.0.1:4000/v1', DABUS_TOKEN_URL: 'https://a.example' }).baseUrl
     ).toBe('http://127.0.0.1:4000/v1');
   });
 
