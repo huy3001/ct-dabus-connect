@@ -16,17 +16,17 @@ Stateless two-way order sync, as specified in [AGENTS.md](./AGENTS.md).
 - **Lifecycle**: `postDeploy` creates the `dabus-order-sync-metadata` Order custom type and, in `event/`, the `dabus-order-sync-subscription`. `preUndeploy` deletes only the subscription.
 - **Client**: `event/src/generated/dabus-client/` is generated with swagger-codegen (command in AGENTS.md). It uses camelCase models and ignores the OAuth scheme, so `src/clients/dabus.ts` converts keys to snake_case and adds the bearer token.
 
-Configuration is in `connect.yaml`. `DAbUS_BASE_URL` includes the version, sandbox and system code. Plain HTTP is accepted only for loopback hosts such as the local mock.
+Configuration is in `connect.yaml`. `DABUS_BASE_URL` includes the version, sandbox and system code. Plain HTTP is accepted only for loopback hosts such as the local mock.
 
 ## Local Dabus API mock
 
 With Node.js 24.18 or later, run `npm install` and then `npm run mock:dabus`
 from this directory. The mock listens only on `http://127.0.0.1:4000` and
-uses the server-variable defaults from `../site/swagger.yml`; for example,
+uses the server-variable defaults from `swagger.yml`; for example,
 `GET /v1/commercetools/test-b2b-project/orders`. Send a dummy bearer token
 for operations requiring OAuth.
 
-This is a Prism-generated mock, not Dabus: responses are synthetic, writes
+This is an OpenAPI-generated mock, not Dabus: responses are synthetic, writes
 are not persisted, and OAuth credentials are not verified. Stop it with
 Ctrl+C. The Dabus client accepts this HTTP URL because it is a loopback host.
 

@@ -41,7 +41,7 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
-    "@commercetools-backend/loggers": "^27.17.1",
+    "@commercetools-backend/loggers": "27.15.0",
     "@commercetools/platform-sdk": "^4.0.0",
     "@commercetools/ts-client": "^4.1.0",
     "body-parser": "^1.20.2",
@@ -50,6 +50,8 @@
     "validator": "^13.11.0"
   },
   "overrides": {
-    "minimatch": "11.0.1"
+    "nodemon": {
+      "minimatch": "11.0.1"
+    }
   }
 }
