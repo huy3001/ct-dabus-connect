@@ -19,7 +19,12 @@ const app: Express = express();
 app.disable('x-powered-by');
 
 // Define configurations
-app.use(bodyParser.json({ limit: '5mb' }));
+app.use(
+  express.json({
+    limit: '5mb',
+    type: ['application/json', 'text/plain'],
+  })
+);
 app.use(bodyParser.urlencoded({ extended: true, limit: '5mb' }));
 
 // Define routes

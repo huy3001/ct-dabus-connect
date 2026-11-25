@@ -1,6 +1,5 @@
 import type { FieldDefinition } from '@commercetools/platform-sdk';
 import { ByProjectKeyRequestBuilder } from '@commercetools/platform-sdk/dist/declarations/src/generated/client/by-project-key-request-builder';
-import { assertNonNullable } from '../utils/assert.utils';
 import { Config } from '../interfaces/config.interface';
 import {
   CUSTOM_TYPE_KEY,
@@ -30,6 +29,7 @@ const FIELD_DEFINITIONS: FieldDefinition[] = [
 export async function ensureOrderSyncCustomType(
   apiRoot: ByProjectKeyRequestBuilder
 ): Promise<void> {
+  logger.info(`Ensuring DaBus Order custom type "${CUSTOM_TYPE_KEY}" exists`);
   const {
     body: { results },
   } = await apiRoot
@@ -38,6 +38,7 @@ export async function ensureOrderSyncCustomType(
     .execute();
 
   if (results.length === 0) {
+    logger.info(`Creating DaBus Order custom type "${CUSTOM_TYPE_KEY}"`);
     await apiRoot
       .types()
       .post({
@@ -49,13 +50,21 @@ export async function ensureOrderSyncCustomType(
         },
       })
       .execute();
+    logger.info(`Created DaBus Order custom type "${CUSTOM_TYPE_KEY}"`);
     return;
   }
 
+  logger.info(`DaBus Order custom type "${CUSTOM_TYPE_KEY}" already exists`);
   const type = results[0];
   const present = new Set(type.fieldDefinitions.map((field) => field.name));
   const missing = FIELD_DEFINITIONS.filter((field) => !present.has(field.name));
-  if (missing.length === 0) return;
+  if (missing.length === 0) {
+    logger.info(`DaBus Order custom type "${CUSTOM_TYPE_KEY}" is up to date`);
+    return;
+  }
+  logger.info(
+    `Adding ${missing.length} missing field(s) to DaBus Order custom type "${CUSTOM_TYPE_KEY}"`
+  );
   await apiRoot
     .types()
     .withKey({ key: CUSTOM_TYPE_KEY })
@@ -69,6 +78,7 @@ export async function ensureOrderSyncCustomType(
       },
     })
     .execute();
+  logger.info(`Updated DaBus Order custom type "${CUSTOM_TYPE_KEY}"`);
 }
 
 async function deleteOrderSubscription(
@@ -101,46 +111,15 @@ export async function createOrderSubscription(
   apiRoot: ByProjectKeyRequestBuilder,
   config: Config
 ): Promise<void> {
-  await deleteOrderSubscription(apiRoot);
+  const topicArn = config.connectAwsTopicArn;
+  const gcpTopicName = config.connectGcpTopicName;
+  const gcpProjectId = config.connectGcpProjectId;
 
-  if (config.connectSubscriptionDestination === 'GoogleCloudPubSub') {
-    assertNonNullable(
-      config.connectGcpTopicName,
-      'GCP Topic Name must be provided for GoogleCloudPubSub destination'
+  if (topicArn) {
+    logger.info(
+      `Detected AWS SNS destination; creating Order Subscription "${ORDER_SUBSCRIPTION_KEY}"`
     );
-    assertNonNullable(
-      config.connectGcpProjectId,
-      'GCP Project ID must be provided for GoogleCloudPubSub destination'
-    );
-    // Skip GCP Pub/Sub subscription in local development mode
-    if (config.connectGcpProjectId === 'local-dev-project') {
-      logger.warn(
-        'CONNECT_GCP_PROJECT_ID is set to "local-dev-project". Skipping GCP Pub/Sub subscription creation for local development.'
-      );
-      return;
-    }
-    await apiRoot
-      .subscriptions()
-      .post({
-        body: {
-          key: ORDER_SUBSCRIPTION_KEY,
-          destination: {
-            type: 'GoogleCloudPubSub',
-            topic: config.connectGcpTopicName,
-            projectId: config.connectGcpProjectId,
-          },
-          messages: ORDER_MESSAGES,
-        },
-      })
-      .execute();
-    return;
-  }
-
-  if (config.connectSubscriptionDestination === 'SNS') {
-    assertNonNullable(
-      config.connectAwsTopicArn,
-      'AWS Topic ARN must be provided for SNS destination'
-    );
+    await deleteOrderSubscription(apiRoot);
     await apiRoot
       .subscriptions()
       .post({
@@ -148,18 +127,52 @@ export async function createOrderSubscription(
           key: ORDER_SUBSCRIPTION_KEY,
           destination: {
             type: 'SNS',
-            topicArn: config.connectAwsTopicArn,
+            topicArn,
             authenticationMode: 'IAM',
           },
           messages: ORDER_MESSAGES,
         },
       })
       .execute();
+    logger.info(
+      `Created AWS SNS Order Subscription "${ORDER_SUBSCRIPTION_KEY}"`
+    );
+    return;
+  }
+
+  if (gcpTopicName && gcpProjectId) {
+    if (gcpProjectId === 'local-dev-project') {
+      logger.warn(
+        'CONNECT_GCP_PROJECT_ID is "local-dev-project"; skipping Order Subscription creation for local development'
+      );
+      return;
+    }
+    logger.info(
+      `Detected GCP Pub/Sub destination; creating Order Subscription "${ORDER_SUBSCRIPTION_KEY}"`
+    );
+    await deleteOrderSubscription(apiRoot);
+    await apiRoot
+      .subscriptions()
+      .post({
+        body: {
+          key: ORDER_SUBSCRIPTION_KEY,
+          destination: {
+            type: 'GoogleCloudPubSub',
+            topic: gcpTopicName,
+            projectId: gcpProjectId,
+          },
+          messages: ORDER_MESSAGES,
+        },
+      })
+      .execute();
+    logger.info(
+      `Created GCP Pub/Sub Order Subscription "${ORDER_SUBSCRIPTION_KEY}"`
+    );
     return;
   }
 
   throw new Error(
-    `Unknown subscription destination type: ${config.connectSubscriptionDestination}`
+    'Cannot create Order Subscription: Connect did not inject an AWS SNS topic ARN or a complete GCP Pub/Sub topic/project pair'
   );
 }
 

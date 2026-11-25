@@ -1,5 +1,4 @@
 import { createApiRoot } from '../client/create.client';
-import { assertError } from '../utils/assert.utils';
 import { Config } from '../interfaces/config.interface';
 import {
   createOrderSubscription,
@@ -18,8 +17,25 @@ async function run(): Promise<void> {
     const config = readConfiguration();
     await postDeploy(config);
   } catch (error) {
-    assertError(error);
-    process.stderr.write(`Post-deploy failed: ${error.message}\n`);
+    const errorWithBody =
+      typeof error === 'object' && error !== null && 'body' in error
+        ? error
+        : undefined;
+    const details =
+      errorWithBody?.body ||
+      (error instanceof Error ? error.message : undefined) ||
+      error;
+    let serialized: string;
+    if (typeof details === 'string') {
+      serialized = details;
+    } else {
+      try {
+        serialized = JSON.stringify(details, null, 2) ?? String(details);
+      } catch {
+        serialized = String(details);
+      }
+    }
+    process.stderr.write(`Post-deploy failed: ${serialized}\n`);
     process.exitCode = 1;
   }
 }

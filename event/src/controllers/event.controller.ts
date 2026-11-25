@@ -6,31 +6,59 @@ import { parseOrderMessage, syncOrder } from '../sync/order-sync';
 import { logger } from '../utils/logger.utils';
 
 /**
- * Receives a Google Cloud Pub/Sub push message carrying an Order message.
- * Valid and intentionally skipped messages are acknowledged; only transient
- * failures answer 500 so Pub/Sub redelivers with backoff.
+ * Receives AWS SNS or Google Cloud Pub/Sub push messages carrying an Order
+ * message. Valid and intentionally skipped messages are acknowledged; only
+ * transient failures answer 500 so the delivery service redelivers.
  */
 export const post = async (request: Request, response: Response) => {
-  if (!request.body) {
-    logger.error('Missing request body.');
-    throw new CustomError(400, 'Bad request: No Pub/Sub message was received');
-  }
-  const pubSubMessage = request.body.message;
-  if (!pubSubMessage) {
-    logger.error('Missing body message');
-    throw new CustomError(400, 'Bad request: Wrong No Pub/Sub message format');
-  }
-  if (!pubSubMessage.data) {
-    throw new CustomError(400, 'Bad request: Pub/Sub message has no data');
+  if (
+    request.body?.Type === 'SubscriptionConfirmation' &&
+    typeof request.body?.SubscribeURL === 'string'
+  ) {
+    logger.info('Confirming AWS SNS subscription');
+    try {
+      const confirmation = await fetch(request.body.SubscribeURL, {
+        method: 'GET',
+        signal: AbortSignal.timeout(10_000),
+        redirect: 'error',
+      });
+      if (!confirmation.ok) {
+        throw new Error(
+          `AWS SNS confirmation endpoint returned ${confirmation.status}`
+        );
+      }
+    } catch (error) {
+      logger.error(`AWS SNS subscription confirmation failed: ${String(error)}`);
+      throw new CustomError(
+        500,
+        'AWS SNS subscription confirmation failed; notification will be retried'
+      );
+    }
+    response.status(200).send();
+    return;
   }
 
   let data: unknown;
-  try {
-    data = JSON.parse(
-      Buffer.from(pubSubMessage.data, 'base64').toString('utf-8')
+  if (typeof request.body?.Message === 'string') {
+    try {
+      data = JSON.parse(request.body.Message);
+    } catch {
+      throw new CustomError(400, 'Bad request: SNS Message is not valid JSON');
+    }
+  } else if (typeof request.body?.message?.data === 'string') {
+    try {
+      data = JSON.parse(
+        Buffer.from(request.body.message.data, 'base64').toString('utf-8')
+      );
+    } catch {
+      throw new CustomError(400, 'Bad request: Pub/Sub data is not valid JSON');
+    }
+  } else {
+    logger.error('Missing or unsupported SNS/Pub/Sub message envelope');
+    throw new CustomError(
+      400,
+      'Bad request: Unsupported SNS or Pub/Sub message format'
     );
-  } catch {
-    throw new CustomError(400, 'Bad request: Pub/Sub data is not valid JSON');
   }
 
   const message = parseOrderMessage(data);
