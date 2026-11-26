@@ -11,6 +11,21 @@ deployAs:
           description: commercetools Composable Commerce API region
           required: true
           default: "europe-west1.gcp"
+        - key: DABUS_BASE_URL
+          description: Dabus API base URL including version, sandbox and system code
+          required: true
+        - key: DABUS_AUTH_URL
+          description: Dabus AWS Cognito OAuth2 token URL
+          required: true
+        - key: DABUS_SCOPE
+          description: Optional OAuth2 scope for Dabus authentication
+          required: false
+        - key: DABUS_JOB_SCHEDULES_JSON
+          description: Optional JSON array overriding the stateless Dabus job schedules
+          required: false
+        - key: MC_APP_URL
+          description: Optional public service URL used as the Merchant Center session-token audience
+          required: false
       securedConfiguration:
         - key: CTP_PROJECT_KEY
           description: commercetools Composable Commerce project key
@@ -26,6 +41,12 @@ deployAs:
           required: true
         - key: DABUS_WEBHOOK_SECRET
           description: Shared secret Dabus sends in the x-dabus-webhook-secret header
+          required: true
+        - key: DABUS_CLIENT_ID
+          description: Dabus OAuth2 client ID
+          required: true
+        - key: DABUS_CLIENT_SECRET
+          description: Dabus OAuth2 client secret
           required: true
   - name: event
     applicationType: event

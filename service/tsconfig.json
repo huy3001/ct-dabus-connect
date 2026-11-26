@@ -3,6 +3,13 @@
   "exclude": ["node_modules", "**/*.spec.ts"],
   "compilerOptions": {
     "resolveJsonModule": true,
+    "strictPropertyInitialization": false,
+    "baseUrl": ".",
+    "paths": {
+      "@commercetools/ts-client": [
+        "node_modules/@commercetools/ts-client/dist/declarations/src/index.d.ts"
+      ]
+    },
     "outDir": "./build",
     "rootDir": "./src",
     "inlineSourceMap": true
