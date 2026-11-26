@@ -37,10 +37,11 @@ function makeOrder(custom?: Record<string, string>): Order {
 
 function setup(order: Order) {
   const post = jest.fn(() => ({ execute: async () => ({}) }));
+  const get = jest.fn(async () => ({ body: order }));
   const apiRoot = {
     orders: () => ({
       withId: () => ({
-        get: () => ({ execute: async () => ({ body: order }) }),
+        get: () => ({ execute: get }),
         post,
       }),
     }),
@@ -51,7 +52,7 @@ function setup(order: Order) {
     updateOrder: jest.fn(async () => undefined),
   };
   const deps = { apiRoot, dabus, orderOrigin: 'commercetools' } as never;
-  return { post: post as jest.Mock, dabus, deps };
+  return { post: post as jest.Mock, get, dabus, deps };
 }
 
 const created = (order: Order) => ({ type: 'OrderCreated' as const, orderId: order.id, order });
@@ -76,13 +77,31 @@ describe('order sync', () => {
     ]);
   });
 
-  it('updates an existing order on OrderStateChanged', async () => {
-    const order = makeOrder();
-    const { dabus, deps } = setup(order);
+  it('retries a previously failed order on OrderStateChanged and records SYNCED', async () => {
+    const order = makeOrder({
+      lastUpdatedBy: 'commercetools',
+      dabusSyncStatus: 'FAILED',
+    });
+    const { dabus, deps, get, post } = setup(order);
     dabus.findOrder.mockResolvedValue({ orderNumber: 'order-1' } as never);
-    await syncOrder({ type: 'OrderStateChanged', orderId: 'o1' }, deps);
+    await expect(
+      syncOrder({ type: 'OrderStateChanged', orderId: 'o1' }, deps)
+    ).resolves.toBe('synced');
+    expect(get).toHaveBeenCalled();
     expect(dabus.updateOrder).toHaveBeenCalledTimes(1);
     expect(dabus.createOrder).not.toHaveBeenCalled();
+    expect(post.mock.calls[0][0].body.actions).toEqual([
+      {
+        action: 'setCustomField',
+        name: 'lastUpdatedBy',
+        value: 'commercetools',
+      },
+      {
+        action: 'setCustomField',
+        name: 'dabusSyncStatus',
+        value: 'SYNCED',
+      },
+    ]);
   });
 
   it('marks unmappable orders FAILED without throwing', async () => {

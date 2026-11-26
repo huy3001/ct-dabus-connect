@@ -111,9 +111,12 @@ export async function createOrderSubscription(
   apiRoot: ByProjectKeyRequestBuilder,
   config: Config
 ): Promise<void> {
-  const topicArn = config.connectAwsTopicArn;
-  const gcpTopicName = config.connectGcpTopicName;
-  const gcpProjectId = config.connectGcpProjectId;
+  const topicArn =
+    config.connectAwsTopicArn ?? process.env.CONNECT_AWS_TOPIC_ARN;
+  const gcpTopicName =
+    config.connectGcpTopicName ?? process.env.CONNECT_GCP_TOPIC_NAME;
+  const gcpProjectId =
+    config.connectGcpProjectId ?? process.env.CONNECT_GCP_PROJECT_ID;
 
   if (topicArn) {
     logger.info(

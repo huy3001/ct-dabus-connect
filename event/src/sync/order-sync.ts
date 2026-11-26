@@ -111,17 +111,11 @@ export async function syncOrder(
   message: OrderMessage,
   { apiRoot, dabus, orderOrigin }: SyncDependencies
 ): Promise<SyncOutcome> {
-  // OrderStateChanged carries no order, and a fresh read is needed for the loop flag.
-  const order =
-    message.type === 'OrderCreated' && message.order
-      ? message.order
-      : (
-          await apiRoot
-            .orders()
-            .withId({ ID: message.orderId })
-            .get()
-            .execute()
-        ).body;
+  // Both event types are processed from the latest resource state. Subscription
+  // payloads can omit data or become stale before a redelivered event is handled.
+  const order = (
+    await apiRoot.orders().withId({ ID: message.orderId }).get().execute()
+  ).body;
 
   if (order.custom?.fields?.[LAST_UPDATED_BY] === 'dabus') {
     logger.info(`Skipping order ${order.id}: last updated by DaBus`);
@@ -136,10 +130,10 @@ export async function syncOrder(
     const customer = await loadCustomer(apiRoot, order.customerId);
     const dabusOrder = mapOrder(order, customer, orderOrigin);
     const existing = await dabus.findOrder(dabusOrder.orderNumber);
-    if (!existing) {
-      await dabus.createOrder(dabusOrder);
-    } else if (message.type === 'OrderStateChanged') {
+    if (existing) {
       await dabus.updateOrder(dabusOrder);
+    } else {
+      await dabus.createOrder(dabusOrder);
     }
   } catch (error) {
     if (error instanceof DabusApiError && error.retryable) throw error;
