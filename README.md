@@ -15,6 +15,12 @@ Stateless two-way order sync, as specified in [AGENTS.md](./AGENTS.md).
 - **Inbound (`service/`)**: `POST /service/webhooks/dabus` with header `x-dabus-webhook-secret` and body `{"order_number": "...", "status": "pending|processing|complete|canceled|..."}`. The payload shape is an assumption: `swagger.yml` defines no webhook. `pending`, `processing`, `complete` and `canceled` change the order state and tag `lastUpdatedBy: dabus`; other statuses write nothing.
 - **Lifecycle**: `postDeploy` creates the `dabus-order-sync-metadata` Order custom type and, in `event/`, the `dabus-order-sync-subscription`. `preUndeploy` deletes only the subscription.
 - **Client**: `event/src/generated/dabus-client/` is generated with swagger-codegen (command in AGENTS.md). It uses camelCase models and ignores the OAuth scheme, so `src/clients/dabus.ts` converts keys to snake_case and adds the bearer token.
+- **Jobs endpoint**: `GET /service/api/dabus/jobs` requires a verified Merchant Center session for the configured project with `canViewDabusJobs` or `canManageDabusJobs` in its forwarded permission claims. Grant those permissions only to appropriate teams. `SKIP_MC_AUTH=true` bypasses authentication and authorization for local testing only.
+
+Set `MC_APP_URL` to the public service origin (for example,
+`https://service.example.com`), not the `/service` endpoint URL. The verifier
+appends the request path when checking the JWT audience. The storefront's
+`DABUS_SERVICE_URL`, by contrast, must include `/service`.
 
 Configuration is in `connect.yaml`. `DABUS_BASE_URL` includes the version, sandbox and system code. Plain HTTP is accepted only for loopback hosts such as the local mock.
 

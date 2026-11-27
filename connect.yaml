@@ -24,7 +24,7 @@ deployAs:
           description: Optional JSON array overriding the stateless Dabus job schedules
           required: false
         - key: MC_APP_URL
-          description: Optional public service URL used as the Merchant Center session-token audience
+          description: Optional public service origin used as the Merchant Center session-token audience, without the /service path
           required: false
       securedConfiguration:
         - key: CTP_PROJECT_KEY

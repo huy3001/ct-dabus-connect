@@ -1,6 +1,7 @@
 import { createSessionAuthVerifier } from '@commercetools-backend/express';
 import { NextFunction, Request, Response } from 'express';
 import CustomError from '../errors/custom.error';
+import { readConfiguration } from '../utils/config.utils';
 import { logger } from '../utils/logger.utils';
 
 const ISSUER_BY_REGION: Record<string, string> = {
@@ -21,12 +22,12 @@ export async function mcAuth(
     return;
   }
 
-  const audience =
+  const serviceUrl =
     process.env.MC_APP_URL ?? process.env.CONNECT_SERVICE_URL;
   const issuer =
     process.env.MC_ISSUER ??
     ISSUER_BY_REGION[process.env.CTP_REGION ?? 'us-east-2.aws'];
-  if (!audience || !issuer) {
+  if (!serviceUrl || !issuer) {
     next(
       new CustomError(
         500,
@@ -36,13 +37,28 @@ export async function mcAuth(
     return;
   }
 
+  let audience: URL;
+  try {
+    audience = new URL(serviceUrl);
+  } catch {
+    next(new CustomError(500, 'Merchant Center service URL is invalid'));
+    return;
+  }
+  if (audience.protocol !== 'https:' && audience.protocol !== 'http:') {
+    next(new CustomError(500, 'Merchant Center service URL must use HTTP or HTTPS'));
+    return;
+  }
+
+  const sessionRequest: Request & {
+    session?: { projectKey: string; userPermissions?: string[] };
+  } = request;
+
   try {
     await createSessionAuthVerifier({
-      audience,
+      audience: audience.origin,
       issuer,
       inferIssuer: true,
-    })(request);
-    next();
+    })(sessionRequest);
   } catch (error) {
     logger.warn(
       `Merchant Center session verification failed: ${
@@ -50,5 +66,18 @@ export async function mcAuth(
       }`
     );
     next(new CustomError(401, 'Merchant Center session is invalid'));
+    return;
   }
+
+  const permissions = sessionRequest.session?.userPermissions;
+  if (
+    sessionRequest.session?.projectKey !== readConfiguration().projectKey ||
+    (!permissions?.includes('canViewDabusJobs') &&
+      !permissions?.includes('canManageDabusJobs'))
+  ) {
+    next(new CustomError(403, 'Dabus Jobs permission is required'));
+    return;
+  }
+
+  next();
 }
